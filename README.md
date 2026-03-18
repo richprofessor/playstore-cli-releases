@@ -27,9 +27,11 @@ playstore generate -n "My App" # Generate complete Play Store assets
 
 ## Mockup Templates
 
-**20 Phone templates** (1080×1920) + **10 Tablet templates** (1600×2560)
+**43 Beautifully Designed Templates** (Phone & Tablet)
 
-| # | Phone Template | Style |
+Browse the full preview of all templates in the \`showcases/\` folder on our GitHub repo!
+
+| # | Template | Style |
 |---|---------------|-------|
 | 1 | `gradient_minimal` | Clean vertical gradient, centered device |
 | 2 | `dark_neon` | Pure black with neon glow borders |
