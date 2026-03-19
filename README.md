@@ -1,40 +1,64 @@
 # Google Play Store Automation CLI
 
-Automate your Google Play Store listing assets generation from any mobile app project (React Native, Flutter, Android Native, etc).
+For vibe coders who want the Play Store page to feel finished before the momentum disappears.
+
+PlayStore CLI turns a mobile app folder into store copy, screenshots, mockups, and MCP tools while keeping the public install tiny and the source out of the published package.
+
+The built-in MCP server keeps that same flow inside Claude, Codex, Cursor, Kilo, Cline, and Antigravity, so your editor can generate copy, inspect project structure, tweak mockup YAML, review templates, and pull ADB screenshots without breaking context.
 
 ## Quick Start
 
 ```bash
-# Install globally via NPM
 npm install -g playstore-cli
 
 cd your_project_folder
-playstore structure        # Visualize and document your project structure
-playstore git              # Smart Git commits and initialization
-playstore analyze          # Scan project metadata
-export GEMINI_API_KEY=your_key
-playstore generate -n "My App" # Generate complete Play Store assets
+playstore structure
+playstore git
+playstore analyze
+playstore setup
+playstore generate -n "My App"
 ```
+
+## Public Release Model
+
+This public repository is for release-facing assets only:
+
+- GitHub Releases host the compiled binaries downloaded during `npm install`
+- `showcases/` contains mockup previews for templates
+- the npm package stays tiny and downloads the correct engine bundle at install time
+- the source repository can stay private without breaking public installs
+
+Current release asset naming:
+
+- macOS / Linux: `playstore-<platform>-<arch>.tar.gz`
+- Windows: `playstore-<platform>-<arch>.zip`
+- MCP server uses the same pattern with `playstore-mcp-server-*`
+
+Examples:
+
+- `playstore-darwin-arm64.tar.gz`
+- `playstore-linux-x64.tar.gz`
+- `playstore-win32-x64.zip`
+- `playstore-mcp-server-win32-x64.zip`
 
 ## Features
 
-- **Project Insights** — `playstore structure` visually maps your architecture into Markdown.
-- **Git Automation** — `playstore git` interactively handles commits and repos.
-- **AI MCP Server** — Includes an MCP server (`playstore-mcp-server`) to integrate with AI IDEs like Cursor and Claude.
-- **LLM-powered copy** — App title, short description, long description, keywords, and What's New section.
-- **Real Device Screenshots** — `playstore adb` captures screenshots directly from your connected Android device.
-- **Feature graphic** — 1024×500 banner image (AI-generated or procedural with Pillow/OpenCV).
-- **Phone screenshots** — 1080×1920 mockup screenshots with smart text framing.
-- **Tablet screenshots** — 1600×2560 mockup screenshots.
-- **App icon** — 512×512 icon with gradient and initials.
-- **HTML preview** — Browse all assets in your browser inside a beautiful generated `preview.html`.
-- **JSON report** — Machine-readable summary (`playstore_summary.json`) with character limit validation validations.
+- **Project Insights** - `playstore structure` maps your architecture into readable Markdown.
+- **Git Automation** - `playstore git`, `git status`, `git log`, and commit helpers reduce terminal churn.
+- **MCP-Native Workflow** - Includes `playstore-mcp-server` plus short aliases like `text`, `generate`, `screenshots`, and `setup`.
+- **Local Key Storage** - Save your Gemini key once with `playstore setup`; MCP and CLI both reuse `~/.playstore/config.json`.
+- **No-Key Fallback** - Text copy still generates usable output even when no API key is configured.
+- **Store Copy** - App title, short description, long description, keywords, and What's New.
+- **Real Device Capture** - `playstore adb` pulls screenshots directly from a connected Android device.
+- **Mockups and Graphics** - Phone screenshots, tablet screenshots, icons, and feature graphics.
+- **HTML Preview** - Browse generated assets in `preview.html`.
+- **JSON Report** - Character limits and output metadata are saved in `playstore_summary.json`.
 
 ## Mockup Templates
 
 **43 Beautifully Designed Templates** (Phone & Tablet)
 
-Browse the full preview of all templates in the `showcases/` folder on our GitHub repo: [Showcases Directory](https://github.com/richprofessor/playstore-cli-releases/tree/main/showcases)
+Browse the full preview of all templates in the `showcases/` folder on this repo: [Showcases Directory](https://github.com/richprofessor/playstore-cli-releases/tree/main/showcases)
 
 **15 fonts available:** `sans`, `sans_bold`, `serif`, `serif_bold`, `mono`, `inter`, `roboto`, `roboto_bold`, `poppins`, `poppins_bold`, `montserrat`, `playfair`, `nunito`, `oswald`, `raleway`
 
@@ -60,83 +84,97 @@ playstore mockup preview-fonts -s screenshot.png --template material
 
 ## Commands
 
-### `generate` — Full generation (recommended)
+### `generate` - Full generation (recommended)
 ```bash
 playstore generate --project /path/to/your/app --output ./output
 ```
 
 Options:
-- `--project` / `-p` — Path to your app project (default: `.`)
-- `--output` / `-o` — Output directory (default: `output`)
-- `--name` / `-n` — Override app name
-- `--color` / `-c` — Theme hex color (e.g. `4338ca` for indigo)
-- `--phone-count` — Number of phone screenshots (1-8, default: 8)
-- `--tablet-count` — Number of tablet screenshots (1-8, default: 8)
-- `--no-ai-images` — Use procedural image generation (faster, no API cost)
-- `--skip-screenshots` — Skip screenshot generation
-- `--skip-copy` — Skip LLM copy generation
-- `--adb` — Use ADB to pull screenshots from connected Android device
+- `--project` / `-p` - Path to your app project (default: `.`)
+- `--output` / `-o` - Output directory (default: `output`)
+- `--name` / `-n` - Override app name
+- `--color` / `-c` - Theme hex color (e.g. `4338ca` for indigo)
+- `--phone-count` - Number of phone screenshots (1-8, default: 8)
+- `--tablet-count` - Number of tablet screenshots (1-8, default: 8)
+- `--no-ai-images` - Use procedural image generation (faster, no API cost)
+- `--skip-screenshots` - Skip screenshot generation
+- `--skip-copy` - Skip LLM copy generation
+- `--adb` - Use ADB to pull screenshots from a connected Android device
 
-### `text` — Generate only text copy
+### `text` - Generate only text copy
 ```bash
 playstore text --project /path/to/your/app --output ./output
 ```
 
-### `screenshots` — Generate only screenshots
+### MCP aliases
+If you are calling PlayStore through an MCP client, these short aliases are available too:
+- `text` -> generate text copy and save files
+- `generate` -> full pipeline
+- `screenshots` -> screenshot/mockup generation
+- `setup` -> save or update the Gemini API key
+
+The MCP tools also expose the longer names:
+- `generate_store_copy`
+- `generate_full_pipeline`
+- `generate_screenshots`
+- `save_gemini_api_key`
+
+When no API key is present, text generation falls back to local generation so files can still be created.
+
+### `screenshots` - Generate only screenshots
 ```bash
 playstore screenshots --app-name "MyApp" --color 4338ca --output ./output
 ```
 
-### `adb` — ADB Screenshot Fetcher
+### `adb` - ADB Screenshot Fetcher
 ```bash
 playstore adb
-# Or run generate with ADB:
 playstore generate --adb
 ```
-Connects to your android device over ADB and pulls live layout screenshots perfectly sized for mockups.
+Connects to your Android device over ADB and pulls live layout screenshots sized for mockups.
 
-### `structure` — Visualize Project Structure
+### `structure` - Visualize project structure
 ```bash
 playstore structure
 ```
-Generates a highly readable emoji-based filesystem layout of your workspace while skipping standard ignore folders (like `node_modules` or `.git`). Let's you save the raw overview straight to a Markdown file.
+Generates a readable emoji-based filesystem layout while skipping standard ignore folders such as `node_modules` and `.git`.
 
-### `git` — Smart Git Helper
+### `git` - Smart Git helper
 ```bash
 playstore git
 playstore git log
 playstore git status
 ```
-Interactive prompt to handle standard git operations safely. Allows simple commits, pushes, and easily outputs Git history.
+Interactive prompts handle standard Git operations safely while keeping common history and status checks simple.
 
-### `analyze` — Analyze project metadata
+### `analyze` - Analyze project metadata
 ```bash
 playstore analyze --project /path/to/your/app
 ```
 
 ## Output Structure
 
-```
+```text
 output/
-├── title.txt                  # App title (max 50 chars)
-├── short_description.txt      # Short description (max 80 chars)
-├── long_description.txt       # Long description (max 4000 chars)
-├── keywords.txt               # 30 SEO keywords
-├── whats_new.txt              # What's New section (max 500 chars)
-├── feature_graphic.png        # 1024×500 feature graphic
-├── icon_512x512.png           # 512×512 app icon
+├── title.txt
+├── short_description.txt
+├── long_description.txt
+├── keywords.txt
+├── whats_new.txt
+├── feature_graphic.png
+├── icon_512x512.png
 ├── phone/
 │   ├── phone_screenshot_01.png  ... phone_screenshot_08.png
 ├── tablet/
 │   ├── tablet_screenshot_01.png ... tablet_screenshot_08.png
-├── preview.html               # Browse all generated assets in a visual grid!
-└── playstore_summary.json     # Detailed JSON report with character limit validations
+├── preview.html
+└── playstore_summary.json
 ```
 
 ## Supported Project Types
 
 The tool auto-detects metadata from:
-- **React Native / Expo** — `package.json`, `app.json`, `app.config.js/ts`
-- **Flutter** — `pubspec.yaml`
-- **Android Native** — `AndroidManifest.xml`, `build.gradle`
+- **React Native / Expo** - `package.json`, `app.json`, `app.config.js/ts`
+- **Flutter** - `pubspec.yaml`
+- **Android Native** - `AndroidManifest.xml`, `build.gradle`
 - **Any project** with a `README.md`
